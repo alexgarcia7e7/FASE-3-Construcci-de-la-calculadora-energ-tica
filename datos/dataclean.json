@@ -1,50 +1,54 @@
 {
   "projecte": "Calculadora d'Estalvi Energètic ITB",
-  "versio": "1.0",
+  "versio": "2.0",
+  "centre": "Institut Tecnològic de Barcelona",
   "indicadors": [
     {
       "id": "IND01",
-      "nom": "Energia Solar Generada",
+      "nom": "Energia Elèctrica",
       "unitat": "kWh",
-      "font": "Plant Report_ITB_01-2025",
-      "dades_mensuals": {
-        "gener": 450.5,
-        "febrer": 510.2,
-        "març": 680.8
-      }
+      "font": "Plant Report ITB Gener 2025 / Estimació Expert",
+      "dades": {
+        "generacio_solar_anual": 6566,
+        "consum_xarxa_anual_real": 163434,
+        "total_consum_itb_anual": 170000
+      },
+      "detall_mensual_solar_gener": 1419.79
     },
     {
       "id": "IND02",
       "nom": "Consum d'Aigua",
       "unitat": "m³",
-      "font": "Factures Aigües de Barcelona",
+      "font": "Factures Aigües de Barcelona 2024-2025",
       "dades_trimestrals": {
-        "T1": 124.5,
-        "T2": 110.2,
-        "T3": 45.0,
-        "T4": 118.3
-      }
+        "T1": 134.0,
+        "T2": 118.5,
+        "T3": 34.0,
+        "T4": 125.5
+      },
+      "total_anual": 412.0
     },
     {
       "id": "IND03",
-      "nom": "Consum de Paper A4",
-      "unitat": "paquets (500 fulls)",
-      "font": "Factures Lyreco / MaterialOficina",
+      "nom": "Consum de Material d'Oficina",
+      "unitat": "unitats",
+      "font": "Albarans Lyreco / ITB Leaks",
       "dades_anuals": [
-        { "mes": "Setembre", "quantitat": 45 },
-        { "mes": "Octubre", "quantitat": 38 },
-        { "mes": "Novembre", "quantitat": 42 }
+        { "mes": "Setembre", "paper_a4_paquets": 45, "recanvis_pissarra": 12 },
+        { "mes": "Octubre", "paper_a4_paquets": 38, "recanvis_pissarra": 8 },
+        { "mes": "Novembre", "paper_a4_paquets": 42, "recanvis_pissarra": 15 }
       ]
     },
     {
       "id": "IND04",
       "nom": "Productes de Neteja",
       "unitat": "litres/unitats",
-      "font": "Factures Neteges",
-      "detall": {
-        "detergent": 15,
-        "desinfectant": 10,
-        "paper_wc": 120
+      "font": "Factures Serveis de Neteges",
+      "detall_mensual": {
+        "detergent_multiusos": 12.5,
+        "desinfectant": 8.0,
+        "paper_higienic_rotllos": 95,
+        "sabó_mans": 10.0
       }
     }
   ]
