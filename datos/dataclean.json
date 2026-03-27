@@ -1,0 +1,51 @@
+{
+  "projecte": "Calculadora d'Estalvi Energètic ITB",
+  "versio": "1.0",
+  "indicadors": [
+    {
+      "id": "IND01",
+      "nom": "Energia Solar Generada",
+      "unitat": "kWh",
+      "font": "Plant Report_ITB_01-2025",
+      "dades_mensuals": {
+        "gener": 450.5,
+        "febrer": 510.2,
+        "març": 680.8
+      }
+    },
+    {
+      "id": "IND02",
+      "nom": "Consum d'Aigua",
+      "unitat": "m³",
+      "font": "Factures Aigües de Barcelona",
+      "dades_trimestrals": {
+        "T1": 124.5,
+        "T2": 110.2,
+        "T3": 45.0,
+        "T4": 118.3
+      }
+    },
+    {
+      "id": "IND03",
+      "nom": "Consum de Paper A4",
+      "unitat": "paquets (500 fulls)",
+      "font": "Factures Lyreco / MaterialOficina",
+      "dades_anuals": [
+        { "mes": "Setembre", "quantitat": 45 },
+        { "mes": "Octubre", "quantitat": 38 },
+        { "mes": "Novembre", "quantitat": 42 }
+      ]
+    },
+    {
+      "id": "IND04",
+      "nom": "Productes de Neteja",
+      "unitat": "litres/unitats",
+      "font": "Factures Neteges",
+      "detall": {
+        "detergent": 15,
+        "desinfectant": 10,
+        "paper_wc": 120
+      }
+    }
+  ]
+}
