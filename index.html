@@ -4,37 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora ASG ITB - Consumo 1000 Alumnos</title>
+
+    <link rel="stylesheet" href="style/style.css">
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        :root { --itb-blue: #004a99; --itb-green: #28a745; --itb-light: #f8f9fa; --itb-orange: #f39c12; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--itb-light); margin: 0; padding-bottom: 50px; color: #333; }
-        header { background: var(--itb-blue); color: white; padding: 1.5rem; text-align: center; border-bottom: 5px solid var(--itb-orange); }
-        .container { max-width: 1200px; margin: 20px auto; padding: 0 20px; }
-
-        .nav-controls { display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 25px; background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .selector-temporal button { padding: 10px 18px; border: none; border-radius: 5px; cursor: pointer; background: #eee; font-weight: bold; transition: 0.3s; font-size: 0.9rem;}
-        button.active { background: var(--itb-blue); color: white; }
-
-        .chart-container { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 30px; height: 450px; }
-
-        .grid-calculadora { display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 20px; }
-        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-top: 5px solid var(--itb-blue); }
-        .card h3 { color: var(--itb-blue); border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 0; display: flex; align-items: center; gap: 10px; }
-
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th { text-align: left; background: #f2f2f2; padding: 10px; font-size: 0.85rem; }
-        td { padding: 12px 10px; border-bottom: 1px solid #eee; font-size: 0.9rem; }
-
-        .val-total { font-weight: bold; color: var(--itb-blue); text-align: right; }
-        .row-total-gasto { background: #eef2f7; font-weight: bold; border-top: 2px solid var(--itb-blue); }
-        .label-sub { display: block; font-size: 0.75rem; color: #777; font-weight: normal; }
-
-        .section-reduction { background: white; margin-top: 40px; padding: 30px; border-radius: 10px; border-left: 8px solid var(--itb-green); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .reduction-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-top: 20px; }
-        .strategy-box { border: 1px solid #ddd; padding: 20px; border-radius: 8px; background: #fdfdfd; }
-        .strategy-box h4 { color: var(--itb-blue); margin-top: 0; display: flex; align-items: center; gap: 10px; }
-    </style>
 </head>
 <body>
 
@@ -95,7 +69,6 @@
     let currentMode = 'current';
     let myChart;
 
-    // Datos maestros extraídos de facturas reales y ratios IT
     const baseElec = 158500;
     const baseAgua = 950;
     const baseOficinaEur = 2273.5;
@@ -164,21 +137,20 @@
 
     function updateChart() {
         const m = getMultiplier();
-
-        // Normalización para que las barras sean comparables en la misma escala (Y máx 1800)
-        const dElec = (baseElec * m) / 100; // 158.500 -> 1585
-        const dAgua = (baseAgua * m);      // 950 -> 950
-        const dOfic = (baseOficinaEur * m) / 2; // 2273 -> 1136
-        const dLimp = (baseLimpiezaEur * m);    // 1262 -> 1262
+        // Normalización: Energía / 100 para escala. El resto 1:1.
+        const dElec = (baseElec * m) / 100;
+        const dAgua = (baseAgua * m);
+        const dOfic = (baseOficinaEur * m); // DIVISION ELIMINADA (antes era /2)
+        const dLimp = (baseLimpiezaEur * m);
 
         const config = {
             type: 'bar',
             data: {
-                labels: ['Energía (kWh/100)', 'Agua (m³)', 'Oficina (€/2)', 'Limpieza (€)'],
+                labels: ['Energía (kWh/100)', 'Agua (m³)', 'Oficina (€)', 'Limpieza (€)'],
                 datasets: [{
-                    label: 'Unidades de Impacto',
+                    label: 'Impacto Ambiental / Económico',
                     data: [dElec, dAgua, dOfic, dLimp],
-                    backgroundColor: ['#004a99', '#28a745', '#f39c12', '#ff0000'],
+                    backgroundColor: ['#004a99', '#28a745', '#f39c12', '#8d6e3b'],
                     borderRadius: 5
                 }]
             },
@@ -188,13 +160,13 @@
                 scales: {
                     y: {
                         beginAtZero: true,
-                        max: 1800, // ESCALA FIJA A 1800 SOLICITADA
-                        title: { display: true, text: 'Nivel de Consumo / Coste' }
+                        max: 2500, // AJUSTADO A 2500 PARA QUE OFICINA QUE LLEGA A ~2273 QUEPA BIEN
+                        title: { display: true, text: 'Consumo / Coste' }
                     }
                 },
                 plugins: {
                     legend: { display: false },
-                    title: { display: true, text: 'Evolución del Impacto ITB (Escala fija)', font: { size: 18 } }
+                    title: { display: true, text: '               Impacto ITB', font: { size: 18 } }
                 }
             }
         };
