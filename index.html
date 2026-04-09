@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora ASG ITB - Consumo 1000 Alumnos</title>
+    <title>Calculadora ASG ITB - Consumo e IPC</title>
 
     <link rel="stylesheet" href="style/style.css">
 
@@ -14,7 +14,6 @@
 
 <header>
     <h1>Calculadora de Sostenibilidad ITB</h1>
-
 </header>
 
 <div class="container">
@@ -89,8 +88,23 @@
         return 1.0;
     }
 
+    // Función para calcular el IPC acumulado según el modo
+    function getIPC() {
+        if (currentMode === 'past') return -3.1; // Se descuenta el IPC del año anterior
+        if (currentMode === 'current') return 0;  // Precio base actual
+        if (currentMode === 'future') return 2.5; // Inflación estimada 1 año
+        if (currentMode === 'goal') return 7.7;   // Inflación acumulada estimada 3 años (compuesta)
+        return 0;
+    }
+
+    function applyIPC(value) {
+        const ipc = getIPC();
+        return value * (1 + (ipc / 100));
+    }
+
     function render() {
         const m = getMultiplier();
+        const ipcPercent = getIPC();
         const grid = document.getElementById('main-grid');
 
         grid.innerHTML = `
@@ -113,23 +127,23 @@
             <div class="card">
                 <h3><i class="fas fa-copy"></i> Material de oficina</h3>
                 <table>
-                    <thead><tr><th>Elemento</th><th>Cantidad (12m)</th><th>Gasto Anual (€)</th></tr></thead>
-                    <tr><td>Papel A4 Blanco</td><td>${Math.round(495 * m)} paq</td><td class="val-total">${(2079 * m).toFixed(2)} €</td></tr>
-                    <tr><td>Recambios Pizarra</td><td>${Math.round(120 * m)} ud</td><td class="val-total">${(132 * m).toFixed(2)} €</td></tr>
-                    <tr><td>Carpetas/Subcarpetas</td><td>${Math.round(250 * m)} ud</td><td class="val-total">${(62.5 * m).toFixed(2)} €</td></tr>
-                    <tr class="row-total-gasto"><td>TOTAL GASTO OFICINA</td><td>-</td><td class="val-total">${(baseOficinaEur * m).toFixed(2)} €</td></tr>
+                    <thead><tr><th>Elemento</th><th>Cantidad (12m)</th><th>IPC %</th><th>Gasto (€)</th></tr></thead>
+                    <tr><td>Papel A4 Blanco</td><td>${Math.round(495 * m)} paq</td><td>${ipcPercent}%</td><td class="val-total">${applyIPC(2079 * m).toFixed(2)} €</td></tr>
+                    <tr><td>Recambios Pizarra</td><td>${Math.round(120 * m)} ud</td><td>${ipcPercent}%</td><td class="val-total">${applyIPC(132 * m).toFixed(2)} €</td></tr>
+                    <tr><td>Carpetas/Subcarpetas</td><td>${Math.round(250 * m)} ud</td><td>${ipcPercent}%</td><td class="val-total">${applyIPC(62.5 * m).toFixed(2)} €</td></tr>
+                    <tr class="row-total-gasto"><td>TOTAL GASTO OFICINA</td><td>-</td><td>-</td><td class="val-total">${applyIPC(baseOficinaEur * m).toFixed(2)} €</td></tr>
                 </table>
             </div>
 
             <div class="card">
                 <h3><i class="fas fa-shining"></i> Material de limpieza</h3>
                 <table>
-                    <thead><tr><th>Elemento</th><th>Cantidad (12m)</th><th>Gasto Anual (€)</th></tr></thead>
-                    <tr><td>Detergente Multiusos</td><td>${(150 * m).toFixed(1)} L</td><td class="val-total">${(270 * m).toFixed(2)} €</td></tr>
-                    <tr><td>Desinfectante</td><td>${(96 * m).toFixed(1)} L</td><td class="val-total">${(307.2 * m).toFixed(2)} €</td></tr>
-                    <tr><td>Papel Higiénico</td><td>${Math.round(1140 * m)} ud</td><td class="val-total">${(433.2 * m).toFixed(2)} €</td></tr>
-                    <tr><td>Jabón de manos</td><td>${(120 * m).toFixed(1)} L</td><td class="val-total">${(252 * m).toFixed(2)} €</td></tr>
-                    <tr class="row-total-gasto"><td>TOTAL GASTO LIMPIEZA</td><td>-</td><td class="val-total">${(baseLimpiezaEur * m).toFixed(2)} €</td></tr>
+                    <thead><tr><th>Elemento</th><th>Cantidad (12m)</th><th>IPC %</th><th>Gasto (€)</th></tr></thead>
+                    <tr><td>Detergente Multiusos</td><td>${(150 * m).toFixed(1)} L</td><td>${ipcPercent}%</td><td class="val-total">${applyIPC(270 * m).toFixed(2)} €</td></tr>
+                    <tr><td>Desinfectante</td><td>${(96 * m).toFixed(1)} L</td><td>${ipcPercent}%</td><td class="val-total">${applyIPC(307.2 * m).toFixed(2)} €</td></tr>
+                    <tr><td>Papel Higiénico</td><td>${Math.round(1140 * m)} ud</td><td>${ipcPercent}%</td><td class="val-total">${applyIPC(433.2 * m).toFixed(2)} €</td></tr>
+                    <tr><td>Jabón de manos</td><td>${(120 * m).toFixed(1)} L</td><td>${ipcPercent}%</td><td class="val-total">${applyIPC(252 * m).toFixed(2)} €</td></tr>
+                    <tr class="row-total-gasto"><td>TOTAL GASTO LIMPIEZA</td><td>-</td><td>-</td><td class="val-total">${applyIPC(baseLimpiezaEur * m).toFixed(2)} €</td></tr>
                 </table>
             </div>
         `;
@@ -137,18 +151,18 @@
 
     function updateChart() {
         const m = getMultiplier();
-        // Normalización: Energía / 100 para escala. El resto 1:1.
+        // El gráfico muestra el gasto final incluyendo IPC
         const dElec = (baseElec * m) / 100;
         const dAgua = (baseAgua * m);
-        const dOfic = (baseOficinaEur * m); // DIVISION ELIMINADA (antes era /2)
-        const dLimp = (baseLimpiezaEur * m);
+        const dOfic = applyIPC(baseOficinaEur * m);
+        const dLimp = applyIPC(baseLimpiezaEur * m);
 
         const config = {
             type: 'bar',
             data: {
                 labels: ['Energía (kWh/100)', 'Agua (m³)', 'Oficina (€)', 'Limpieza (€)'],
                 datasets: [{
-                    label: 'Impacto Ambiental / Económico',
+                    label: 'Impacto Ambiental / Económico (inc. IPC)',
                     data: [dElec, dAgua, dOfic, dLimp],
                     backgroundColor: ['#004a99', '#28a745', '#f39c12', '#ff0000'],
                     borderRadius: 5
@@ -160,13 +174,13 @@
                 scales: {
                     y: {
                         beginAtZero: true,
-                        max: 2500, // AJUSTADO A 2500 PARA QUE OFICINA QUE LLEGA A ~2273 QUEPA BIEN
+                        max: 2500,
                         title: { display: true, text: 'Consumo / Coste' }
                     }
                 },
                 plugins: {
                     legend: { display: false },
-                    title: { display: true, text: '               Impacto ITB', font: { size: 18 } }
+                    title: { display: true, text: 'Impacto ITB', font: { size: 18 } }
                 }
             }
         };
