@@ -1,18 +1,19 @@
 {
   "projecte": "Calculadora d'Estalvi Energètic ITB",
-  "versio": "2.0",
+  "versio": "3.0",
   "centre": "Institut Tecnològic de Barcelona",
   "indicadors": [
     {
       "id": "IND01",
       "nom": "Energia Elèctrica",
       "unitat": "kWh",
-      "font": "Plant Report ITB Gener 2025 / Estimació Expert",
+      "font": "Plant Report ITB / Mitjana Centres Tecnològics",
       "dades": {
         "generacio_solar_anual": 6566,
-        "consum_xarxa_anual_real": 163434,
-        "total_consum_itb_anual": 170000
+        "consum_xarxa_anual_estimat": 151934,
+        "total_consum_itb_anual": 158500
       },
+      "estrategia_temporal": "Increment hivern (calefacció) i servidors 24/7",
       "detall_mensual_solar_gener": 1419.79
     },
     {
@@ -26,30 +27,89 @@
         "T3": 34.0,
         "T4": 125.5
       },
-      "total_anual": 412.0
+      "total_anual": 412.0,
+      "estrategia_estacional": "Reducció dràstica T3 (Agost inactiu)"
     },
     {
       "id": "IND03",
       "nom": "Consum de Material d'Oficina",
-      "unitat": "unitats",
+      "unitat": "unitats/euros",
       "font": "Albarans Lyreco / ITB Leaks",
-      "dades_anuals": [
-        { "mes": "Setembre", "paper_a4_paquets": 45, "recanvis_pissarra": 12 },
-        { "mes": "Octubre", "paper_a4_paquets": 38, "recanvis_pissarra": 8 },
-        { "mes": "Novembre", "paper_a4_paquets": 42, "recanvis_pissarra": 15 }
-      ]
+      "productes": [
+        {
+          "nom": "Paper A4 Blanc 80g",
+          "unitat": "paquets",
+          "preu_unitari": 4.20,
+          "quantitat_anual": 495,
+          "quantitat_lectiva": 470
+        },
+        {
+          "nom": "Recanvis Pissarra (Edding)",
+          "unitat": "unitats",
+          "preu_unitari": 1.10,
+          "quantitat_anual": 120,
+          "quantitat_lectiva": 115
+        },
+        {
+          "nom": "Carpetes i Subcarpetes",
+          "unitat": "unitats",
+          "preu_unitari": 0.25,
+          "quantitat_anual": 250,
+          "quantitat_lectiva": 250
+        }
+      ],
+      "gasto_total_anual_eur": 2273.50
     },
     {
       "id": "IND04",
       "nom": "Productes de Neteja",
-      "unitat": "litres/unitats",
+      "unitat": "litres/unitats/euros",
       "font": "Factures Serveis de Neteges",
-      "detall_mensual": {
-        "detergent_multiusos": 12.5,
-        "desinfectant": 8.0,
-        "paper_higienic_rotllos": 95,
-        "sabó_mans": 10.0
-      }
+      "productes": [
+        {
+          "nom": "Detergent Multiusos",
+          "unitat": "litres",
+          "preu_unitari": 1.80,
+          "quantitat_anual": 150,
+          "quantitat_lectiva": 125
+        },
+        {
+          "nom": "Desinfectant Superfícies",
+          "unitat": "litres",
+          "preu_unitari": 3.20,
+          "quantitat_anual": 96,
+          "quantitat_lectiva": 80
+        },
+        {
+          "nom": "Paper Higiènic",
+          "unitat": "rotllos",
+          "preu_unitari": 0.38,
+          "quantitat_anual": 1140,
+          "quantitat_lectiva": 950
+        },
+        {
+          "nom": "Sabó de mans",
+          "unitat": "litres",
+          "preu_unitari": 2.10,
+          "quantitat_anual": 120,
+          "quantitat_lectiva": 100
+        }
+      ],
+      "gasto_total_anual_eur": 1262.40
     }
-  ]
+  ],
+  "pla_reduccio_30": {
+    "objectiu": "Reduir l'impacte ambiental un 30% en 3 anys",
+    "accions": [
+      "Virtualització de servidors (Green Coding)",
+      "Instal·lació de sensors IoT per a fugues d'aigua",
+      "Digitalització total d'exàmens i apunts",
+      "Compra pública verda i economia circular"
+    ],
+    "cronograma": {
+      "any_1": "Auditoria i sensors (-10%)",
+      "any_2": "Virtualització i hardware reacondicionat (-22%)",
+      "any_3": "Certificació Residuo Zero (-30%)"
+    }
+  }
 }
