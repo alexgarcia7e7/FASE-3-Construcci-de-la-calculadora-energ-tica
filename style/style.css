@@ -157,3 +157,21 @@ td {
     align-items: center;
     gap: 10px;
 }
+
+/* ESTILOS PARA LOS CHECKBOXES INTERACTIVOS */
+.checkbox-card {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.checkbox-card:hover {
+    border-color: var(--itb-orange);
+    background: #fffcf5;
+}
+
+.strategy-box input[type="checkbox"] {
+    cursor: pointer;
+}

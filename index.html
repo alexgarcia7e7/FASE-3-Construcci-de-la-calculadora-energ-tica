@@ -3,10 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora ASG ITB - Consumo e IPC</title>
-
+    <title>Calculadora de Sostenibilidad ITB</title>
     <link rel="stylesheet" href="style/style.css">
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
@@ -19,15 +17,51 @@
 <div class="container">
     <div class="nav-controls">
         <div class="selector-temporal">
-            <button onclick="updateView('past')" id="btn-past">Año Pasado</button>
-            <button onclick="updateView('current')" id="btn-current" class="active">Este Año (Real)</button>
-            <button onclick="updateView('future')" id="btn-future">Próximo Año (-10%)</button>
-            <button onclick="updateView('goal')" id="btn-goal">Meta 3 Años (-30%)</button>
+            <button onclick="updateView('past')" id="btn-past"></button>
+            <button onclick="updateView('current')" id="btn-current" class="active"></button>
+            <button onclick="updateView('future')" id="btn-future"></button>
+            <button onclick="updateView('goal')" id="btn-goal"></button>
         </div>
     </div>
 
     <div class="chart-container">
         <canvas id="sustainabilityChart"></canvas>
+    </div>
+
+    <div class="section-reduction" style="border-left: 8px solid var(--itb-orange); margin-bottom: 30px;">
+        <h2><i class="fas fa-tools"></i> Simulador de Acciones Recomendadas</h2>
+        <p>Selecciona las mejoras para comparar el impacto proyectado en el gráfico inferior:</p>
+
+        <div class="reduction-grid">
+            <label class="strategy-box" style="display: flex; gap: 15px; cursor: pointer; align-items: center;">
+                <input type="checkbox" id="check-solar" onchange="updateComparisonChart()" style="transform: scale(1.5);">
+                <div>
+                    <h4><i class="fas fa-sun"></i> Ampliación Fotovoltaica</h4>
+                    <p>Cubre el consumo 24/7 de servidores. <b>Ahorro: -15% Energía.</b></p>
+                </div>
+            </label>
+
+            <label class="strategy-box" style="display: flex; gap: 15px; cursor: pointer; align-items: center;">
+                <input type="checkbox" id="check-iot" onchange="updateComparisonChart()" style="transform: scale(1.5);">
+                <div>
+                    <h4><i class="fas fa-microchip"></i> Sensores IoT</h4>
+                    <p>Control de fugas y gestión de luces. <b>Ahorro: -10% Energía y Agua.</b></p>
+                </div>
+            </label>
+
+            <label class="strategy-box" style="display: flex; gap: 15px; cursor: pointer; align-items: center;">
+                <input type="checkbox" id="check-paper" onchange="updateComparisonChart()" style="transform: scale(1.5);">
+                <div>
+                    <h4><i class="fas fa-leaf"></i> Digitalización Total</h4>
+                    <p>Eliminación de exámenes en papel. <b>Ahorro: -30% Oficina.</b></p>
+                </div>
+            </label>
+        </div>
+
+        <h3 style="margin-top: 30px; color: var(--itb-blue);">Comparativa: Consumo Real vs. Con Acciones Aplicadas</h3>
+        <div class="chart-container" style="height: 350px; background: #fdfdfd; border: 1px solid #eee;">
+            <canvas id="comparisonChart"></canvas>
+        </div>
     </div>
 
     <div class="grid-calculadora" id="main-grid"></div>
@@ -55,10 +89,7 @@
             <thead>
                 <tr><th>Fase</th><th>Acción Principal</th><th>Indicador Clave</th><th>Reducción Esperada</th></tr>
             </thead>
-            <tbody>
-                <tr><td>Año 1 (2027)</td><td>Instalación de sensores IoT y auditoría hídrica</td><td>kWh y m³ por alumno</td><td><b>-10%</b></td></tr>
-                <tr><td>Año 2 (2028)</td><td>Virtualización de servidores (Cloud híbrido)</td><td>Consumo Rack / Amperaje</td><td><b>-22%</b></td></tr>
-                <tr><td>Año 3 (2029)</td><td>Políticas "Residuo Cero" en Material de Oficina</td><td>Unidades de papel / mes</td><td><b>-30%</b></td></tr>
+            <tbody id="cronograma-body">
             </tbody>
         </table>
     </div>
