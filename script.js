@@ -1,7 +1,6 @@
 let myChart;
 let comparisonChart;
 let currentMode = 'current';
-
 const currentYear = new Date().getFullYear();
 
 const baseElec = 158500;
@@ -24,18 +23,13 @@ const getSectionColors = (opacity) => [
 ];
 
 function getMultiplier(mode) {
-    if (mode === 'past') return 1.05;
-    if (mode === 'future') return 0.90;
-    if (mode === 'goal') return 0.70;
-    return 1.0;
+    const map = { 'past': 1.05, 'current': 1.0, 'future': 0.90, 'goal': 0.70 };
+    return map[mode] || 1.0;
 }
 
 function getIPC(mode) {
-    if (mode === 'past') return -3.1;
-    if (mode === 'current') return 0;
-    if (mode === 'future') return 2.5;
-    if (mode === 'goal') return 7.7;
-    return 0;
+    const map = { 'past': -3.1, 'current': 0, 'future': 2.5, 'goal': 7.7 };
+    return map[mode] || 0;
 }
 
 function applyIPC(value, mode) {
@@ -55,17 +49,65 @@ function getDataForMode(mode) {
 function getSavings() {
     let s = { elec: 1, agua: 1, ofic: 1, limp: 1 };
     if (document.getElementById('check-solar').checked) s.elec -= 0.15;
-    if (document.getElementById('check-iot').checked) { s.elec -= 0.10; s.agua -= 0.10; }
+    if (document.getElementById('check-server').checked) s.elec -= 0.22;
+    if (document.getElementById('check-iot').checked) s.agua -= 0.10;
+    if (document.getElementById('check-perlatis').checked) s.agua -= 0.15;
     if (document.getElementById('check-paper').checked) s.ofic -= 0.30;
+    if (document.getElementById('check-toner').checked) s.ofic -= 0.15;
     if (document.getElementById('check-dispenser').checked) s.limp -= 0.15;
+    if (document.getElementById('check-bio').checked) s.limp -= 0.10;
     return s;
 }
 
-function updateInterfaceTexts() {
-    document.getElementById('btn-past').innerText = `Año Pasado (${currentYear - 1})`;
-    document.getElementById('btn-current').innerText = `Este Año (${currentYear})`;
-    document.getElementById('btn-future').innerText = `Próximo Año (${currentYear + 1})`;
-    document.getElementById('btn-goal').innerText = `Meta 3 Años (${currentYear + 3})`;
+function render() {
+    const m = getMultiplier(currentMode);
+    const ipc = getIPC(currentMode);
+    const grid = document.getElementById('main-grid');
+    let dYear = currentMode === 'past' ? currentYear - 1 : currentMode === 'future' ? currentYear + 1 : currentMode === 'goal' ? currentYear + 3 : currentYear;
+
+    grid.innerHTML = `
+        <div class="card">
+            <h3><i class="fas fa-bolt"></i> Energía Eléctrica (${dYear})</h3>
+            <table>
+                <thead><tr><th>Indicador</th><th>Gasto Anual</th><th>Lectivo (Sep-Jun)</th></tr></thead>
+                <tr><td>Electricidad IT</td><td class="val-total">${(baseElec * m).toLocaleString()} kWh</td><td class="val-total">${(baseElec * m * 0.88).toLocaleString()} kWh</td></tr>
+            </table>
+        </div>
+        <div class="card">
+            <h3><i class="fas fa-tint"></i> Agua (${dYear})</h3>
+            <table>
+                <thead><tr><th>Indicador</th><th>Gasto Anual</th><th>Lectivo (Sep-Jun)</th></tr></thead>
+                <tr><td>Agua Total</td><td class="val-total">${(baseAgua * m).toFixed(1)} m³</td><td class="val-total">${(baseAgua * m * 0.9).toFixed(1)} m³</td></tr>
+            </table>
+        </div>
+        <div class="card">
+            <h3><i class="fas fa-copy"></i> Material de oficina (${dYear})</h3>
+            <table>
+                <thead><tr><th>Elemento</th><th>Cantidad (12m)</th><th>IPC %</th><th>Gasto (€)</th></tr></thead>
+                <tr><td>Papel A4 Blanco</td><td>${Math.round(495 * m)} paq</td><td>${ipc}%</td><td class="val-total">${applyIPC(2079 * m, currentMode).toFixed(2)} €</td></tr>
+                <tr><td>Recambios Pizarra</td><td>${Math.round(120 * m)} ud</td><td>${ipc}%</td><td class="val-total">${applyIPC(132 * m, currentMode).toFixed(2)} €</td></tr>
+                <tr><td>Carpetas/Subcarpetas</td><td>${Math.round(250 * m)} ud</td><td>${ipc}%</td><td class="val-total">${applyIPC(62.5 * m, currentMode).toFixed(2)} €</td></tr>
+                <tr class="row-total-gasto"><td>TOTAL GASTO OFICINA</td><td>-</td><td>-</td><td class="val-total">${applyIPC(baseOficinaEur * m, currentMode).toFixed(2)} €</td></tr>
+            </table>
+        </div>
+        <div class="card">
+            <h3><i class="fas fa-shining"></i> Material de limpieza (${dYear})</h3>
+            <table>
+                <thead><tr><th>Elemento</th><th>Cantidad (12m)</th><th>IPC %</th><th>Gasto (€)</th></tr></thead>
+                <tr><td>Detergente Multiusos</td><td>${(150 * m).toFixed(1)} L</td><td>${ipc}%</td><td class="val-total">${applyIPC(270 * m, currentMode).toFixed(2)} €</td></tr>
+                <tr><td>Desinfectante</td><td>${(96 * m).toFixed(1)} L</td><td>${ipc}%</td><td class="val-total">${applyIPC(307.2 * m, currentMode).toFixed(2)} €</td></tr>
+                <tr><td>Paper Higiènic</td><td>${Math.round(1140 * m)} ud</td><td>${ipc}%</td><td class="val-total">${applyIPC(433.2 * m, currentMode).toFixed(2)} €</td></tr>
+                <tr><td>Sabó de mans</td><td>${(120 * m).toFixed(1)} L</td><td>${ipc}%</td><td class="val-total">${applyIPC(252 * m, currentMode).toFixed(2)} €</td></tr>
+                <tr class="row-total-gasto"><td>TOTAL GASTO LIMPIEZA</td><td>-</td><td>-</td><td class="val-total">${applyIPC(baseLimpiezaEur * m, currentMode).toFixed(2)} €</td></tr>
+            </table>
+        </div>
+    `;
+
+    document.getElementById('cronograma-body').innerHTML = `
+        <tr><td>Año 1 (2027)</td><td>Sensores IoT y Placas Solares</td><td>kWh / m³</td><td>-25%</td></tr>
+        <tr><td>Año 2 (2028)</td><td>Virtualización y Servidores Eco</td><td>Rack Amp</td><td>-22%</td></tr>
+        <tr><td>Año 3 (2029)</td><td>Cero Papel y Digitalización 100%</td><td>Unidades</td><td>-30%</td></tr>
+    `;
 }
 
 function initChart() {
@@ -73,49 +115,32 @@ function initChart() {
     const data = {
         labels: ['Energía (kWh/100)', 'Agua (m³)', 'Oficina (€)', 'Limpieza (€)'],
         datasets: [
-            { label: `Año ${currentYear - 1}`, data: getDataForMode('past'), backgroundColor: getSectionColors(0.3), borderColor: getSectionColors(1), borderWidth: 1 },
-            { label: `Año ${currentYear}`, data: getDataForMode('current'), backgroundColor: getSectionColors(0.5), borderColor: getSectionColors(1), borderWidth: 1 },
-            { label: `Año ${currentYear + 1}`, data: getDataForMode('future'), backgroundColor: getSectionColors(0.8), borderColor: getSectionColors(1), borderWidth: 1 },
-            { label: `Meta ${currentYear + 3}`, data: getDataForMode('goal'), backgroundColor: getSectionColors(1), borderColor: getSectionColors(1), borderWidth: 1 }
+            { label: `${currentYear-1}`, data: getDataForMode('past'), backgroundColor: getSectionColors(0.3), borderColor: getSectionColors(1), borderWidth: 1 },
+            { label: `${currentYear}`, data: getDataForMode('current'), backgroundColor: getSectionColors(0.5), borderColor: getSectionColors(1), borderWidth: 1 },
+            { label: `${currentYear+1}`, data: getDataForMode('future'), backgroundColor: getSectionColors(0.8), borderColor: getSectionColors(1), borderWidth: 1 },
+            { label: `${currentYear+3}`, data: getDataForMode('goal'), backgroundColor: getSectionColors(1), borderColor: getSectionColors(1), borderWidth: 1 }
         ]
     };
-
     if (myChart) myChart.destroy();
-    myChart = new Chart(ctx, {
-        type: 'bar',
-        data: data,
-        options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 2700 } } }
-    });
+    myChart = new Chart(ctx, { type: 'bar', data: data, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 2700 } } } });
 }
 
 function initComparisonChart() {
     const ctx = document.getElementById('comparisonChart').getContext('2d');
     const actualData = getDataForMode(currentMode);
     const s = getSavings();
-    const projectedData = [
-        actualData[0] * s.elec,
-        actualData[1] * s.agua,
-        actualData[2] * s.ofic,
-        actualData[3] * s.limp
-    ];
-
-    const data = {
-        labels: ['Energía', 'Agua', 'Oficina', 'Limpieza'],
-        datasets: [
-            { label: 'Situación Real', data: actualData, backgroundColor: '#ddd' },
-            { label: 'Con Mejoras Aplicadas', data: projectedData, backgroundColor: '#28a745' }
-        ]
-    };
-
+    const projectedData = [actualData[0]*s.elec, actualData[1]*s.agua, actualData[2]*s.ofic, actualData[3]*s.limp];
     if (comparisonChart) comparisonChart.destroy();
     comparisonChart = new Chart(ctx, {
         type: 'bar',
-        data: data,
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: { y: { beginAtZero: true, max: 2700 } }
-        }
+        data: {
+            labels: ['Energía', 'Agua', 'Oficina', 'Limpieza'],
+            datasets: [
+                { label: 'Situación Real', data: actualData, backgroundColor: 'rgba(200, 200, 200, 0.5)' },
+                { label: 'Con Mejoras', data: projectedData, backgroundColor: getSectionColors(0.9) }
+            ]
+        },
+        options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 2700 } } }
     });
 }
 
@@ -127,71 +152,13 @@ function updateView(mode) {
     initComparisonChart();
 }
 
-function updateComparisonChart() {
-    initComparisonChart();
+function updateComparisonChart() { initComparisonChart(); }
+
+function updateInterfaceTexts() {
+    document.getElementById('btn-past').innerText = `Año Pasado (${currentYear-1})`;
+    document.getElementById('btn-current').innerText = `Este Año (${currentYear})`;
+    document.getElementById('btn-future').innerText = `Próximo Año (${currentYear+1})`;
+    document.getElementById('btn-goal').innerText = `Meta 3 Años (${currentYear+3})`;
 }
 
-function render() {
-    const m = getMultiplier(currentMode);
-    const ipcPercent = getIPC(currentMode);
-    const grid = document.getElementById('main-grid');
-
-    let dYear = currentYear;
-    if (currentMode === 'past') dYear = currentYear - 1;
-    if (currentMode === 'future') dYear = currentYear + 1;
-    if (currentMode === 'goal') dYear = currentYear + 3;
-
-    grid.innerHTML = `
-        <div class="card">
-            <h3><i class="fas fa-bolt"></i> Energía Eléctrica (${dYear})</h3>
-            <table>
-                <thead><tr><th>Indicador</th><th>Gasto Anual</th><th>Lectivo (Sep-Jun)</th></tr></thead>
-                <tr><td>Electricidad IT <span class="label-sub">Servidores + Aulas</span></td><td class="val-total">${(baseElec * m).toLocaleString()} kWh</td><td class="val-total">${(baseElec * m * 0.88).toLocaleString()} kWh</td></tr>
-            </table>
-        </div>
-
-        <div class="card">
-            <h3><i class="fas fa-tint"></i> Agua (${dYear})</h3>
-            <table>
-                <thead><tr><th>Indicador</th><th>Gasto Anual</th><th>Lectivo (Sep-Jun)</th></tr></thead>
-                <tr><td>Agua <span class="label-sub">1.000 usuarios + Limpieza</span></td><td class="val-total">${(baseAgua * m).toFixed(1)} m³</td><td class="val-total">${(baseAgua * m * 0.9).toFixed(1)} m³</td></tr>
-            </table>
-        </div>
-
-        <div class="card">
-            <h3><i class="fas fa-copy"></i> Material de oficina (${dYear})</h3>
-            <table>
-                <thead><tr><th>Elemento</th><th>Cantidad (12m)</th><th>IPC %</th><th>Gasto (€)</th></tr></thead>
-                <tr><td>Papel A4 Blanco</td><td>${Math.round(495 * m)} paq</td><td>${ipcPercent}%</td><td class="val-total">${applyIPC(2079 * m, currentMode).toFixed(2)} €</td></tr>
-                <tr><td>Recambios Pizarra</td><td>${Math.round(120 * m)} ud</td><td>${ipcPercent}%</td><td class="val-total">${applyIPC(132 * m, currentMode).toFixed(2)} €</td></tr>
-                <tr><td>Carpetas/Subcarpetas</td><td>${Math.round(250 * m)} ud</td><td>${ipcPercent}%</td><td class="val-total">${applyIPC(62.5 * m, currentMode).toFixed(2)} €</td></tr>
-                <tr class="row-total-gasto"><td>TOTAL GASTO OFICINA</td><td>-</td><td>-</td><td class="val-total">${applyIPC(baseOficinaEur * m, currentMode).toFixed(2)} €</td></tr>
-            </table>
-        </div>
-
-        <div class="card">
-            <h3><i class="fas fa-shining"></i> Material de limpieza (${dYear})</h3>
-            <table>
-                <thead><tr><th>Elemento</th><th>Cantidad (12m)</th><th>IPC %</th><th>Gasto (€)</th></tr></thead>
-                <tr><td>Detergente Multiusos</td><td>${(150 * m).toFixed(1)} L</td><td>${ipcPercent}%</td><td class="val-total">${applyIPC(270 * m, currentMode).toFixed(2)} €</td></tr>
-                <tr><td>Desinfectante</td><td>${(96 * m).toFixed(1)} L</td><td>${ipcPercent}%</td><td class="val-total">${applyIPC(307.2 * m, currentMode).toFixed(2)} €</td></tr>
-                <tr><td>Paper Higiènic</td><td>${Math.round(1140 * m)} ud</td><td>${ipcPercent}%</td><td class="val-total">${applyIPC(433.2 * m, currentMode).toFixed(2)} €</td></tr>
-                <tr><td>Sabó de mans</td><td>${(120 * m).toFixed(1)} L</td><td>${ipcPercent}%</td><td class="val-total">${applyIPC(252 * m, currentMode).toFixed(2)} €</td></tr>
-                <tr class=\"row-total-gasto\"><td>TOTAL GASTO LIMPIEZA</td><td>-</td><td>-</td><td class=\"val-total\">${applyIPC(baseLimpiezaEur * m, currentMode).toFixed(2)} €</td></tr>
-            </table>
-        </div>
-    `;
-
-    document.getElementById('cronograma-body').innerHTML = `
-        <tr><td>Año 1 (${currentYear + 1})</td><td>Instalación de sensores IoT</td><td>kWh y m³</td><td><b>-10%</b></td></tr>
-        <tr><td>Año 2 (${currentYear + 2})</td><td>Virtualización de servidores</td><td>Amperaje Rack</td><td><b>-22%</b></td></tr>
-        <tr><td>Año 3 (${currentYear + 3})</td><td>Digitalización y Dispensadores</td><td>Papel y Jabón</td><td><b>-30% / -15%</b></td></tr>
-    `;
-}
-
-window.onload = function() {
-    updateInterfaceTexts();
-    render();
-    initChart();
-    initComparisonChart();
-};
+window.onload = function() { updateInterfaceTexts(); render(); initChart(); initComparisonChart(); };

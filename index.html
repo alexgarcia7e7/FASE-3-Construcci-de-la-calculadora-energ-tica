@@ -35,69 +35,76 @@
 
         <div class="reduction-grid">
             <div class="strategy-box">
-                <h4><i class="fas fa-snowflake"></i> Tendencias Estacionales</h4>
-                <p><b>Energía:</b> Consumo mayor en invierno por calefacción. En verano el ahorro se ve limitado por el funcionamiento 24/7 de los racks de servidores.</p>
-                <p><b>Agua:</b> Picos en verano por limpieza profunda de instalaciones y mantenimiento, pese a la menor presencia de alumnado.</p>
-                <p><b>Consumibles:</b> Aumento drástico en épocas de exámenes y matriculación (Septiembre y Mayo).</p>
+                <h4><i class="fas fa-bolt"></i> Estrategia Energética</h4>
+                <p><b>Autoconsumo y Eficiencia:</b> Implementamos placas solares para reducir la dependencia de la red externa durante las horas de máxima actividad. Complementamos esto con la <b>Virtualización de Servidores</b>, que permite consolidar múltiples servicios en un solo hardware, reduciendo drásticamente el calor generado y el consumo eléctrico de refrigeración.</p>
             </div>
 
             <div class="strategy-box">
-                <h4><i class="fas fa-recycle"></i> Economía Circular y Reducción</h4>
-                <p><b>Hardware:</b> Reacondicionamiento de equipos para talleres de montaje, alargando la vida útil del material informático.</p>
-                <p><b>Acción 30%:</b> Virtualización de laboratorios, sensores de agua automáticos y digitalización del 100% de la burocracia académica.</p>
+                <h4><i class="fas fa-tint"></i> Gestión Hídrica Inteligente</h4>
+                <p><b>Control de Caudal:</b> El uso de <b>Sensores IoT</b> permite detectar fugas invisibles en tiempo real mediante telemetría. Además, instalamos <b>Perlizadores</b> en todos los grifos del centro, una tecnología que mezcla aire con agua para mantener la presión reduciendo el consumo real de litros por minuto en un 15%.</p>
+            </div>
+
+            <div class="strategy-box">
+                <h4><i class="fas fa-copy"></i> Oficina de Residuo Cero</h4>
+                <p><b>Transformación Digital:</b> El objetivo <b>Cero Papel</b> no solo elimina el soporte físico, sino que optimiza los procesos administrativos. Para el material impreso residual, aplicamos <b>Toner Eco</b> y tipografías específicas de bajo consumo de tinta que alargan la vida útil de los cartuchos y facilitan el reciclaje del papel.</p>
+            </div>
+
+            <div class="strategy-box">
+                <h4><i class="fas fa-shining"></i> Higiene Sostenible</h4>
+                <p><b>Química Verde:</b> Sustituimos productos corrosivos por <b>Bio-Productos</b> biodegradables. La instalación de <b>Dosificadores Automáticos</b> garantiza que se utilice la cantidad exacta de producto necesaria, evitando el desperdicio por error humano y reduciendo el volumen de envases plásticos gestionados anualmente.</p>
             </div>
         </div>
 
         <h3>Cronograma de Mejora a 3 Años</h3>
         <table>
             <thead>
-                <tr><th>Fase</th><th>Acción Principal</th><th>Indicador Clave</th><th>Reducción Esperada</th></tr>
+                <tr><th>Fase</th><th>Acción Principal</th><th>Indicador Clave</th><th>Reducción Proyectada</th></tr>
             </thead>
-            <tbody id="cronograma-body">
-            </tbody>
+            <tbody id="cronograma-body"></tbody>
         </table>
     </div>
 
-    <div class="section-reduction" style="border-left: 8px solid var(--itb-orange); margin-bottom: 30px;">
+    <div class="section-reduction" style="border-left: 8px solid var(--itb-orange); margin-top: 30px;">
         <h2><i class="fas fa-tools"></i> Simulador de Acciones Recomendadas</h2>
         <p>Selecciona las mejoras para comparar el impacto proyectado en el gráfico inferior:</p>
 
         <div class="reduction-grid">
             <label class="strategy-box checkbox-card">
-                <input type="checkbox" id="check-solar" onchange="updateComparisonChart()" style="transform: scale(1.5);">
-                <div>
-                    <h4><i class="fas fa-sun"></i> Ampliación Fotovoltaica</h4>
-                    <p>Ahorro: <b>-15% Energía</b>.</p>
-                </div>
+                <input type="checkbox" id="check-solar" onchange="updateComparisonChart()">
+                <div><h4><i class="fas fa-sun"></i> Placas Solares</h4><p>Ahorro: <b>-15% Energía</b></p></div>
             </label>
-
             <label class="strategy-box checkbox-card">
-                <input type="checkbox" id="check-iot" onchange="updateComparisonChart()" style="transform: scale(1.5);">
-                <div>
-                    <h4><i class="fas fa-microchip"></i> Sensores IoT</h4>
-                    <p>Ahorro: <b>-10% Energía y Agua</b>.</p>
-                </div>
+                <input type="checkbox" id="check-server" onchange="updateComparisonChart()">
+                <div><h4><i class="fas fa-server"></i> Virtualización</h4><p>Ahorro: <b>-22% Energía</b></p></div>
             </label>
-
             <label class="strategy-box checkbox-card">
-                <input type="checkbox" id="check-paper" onchange="updateComparisonChart()" style="transform: scale(1.5);">
-                <div>
-                    <h4><i class="fas fa-leaf"></i> Digitalización Total</h4>
-                    <p>Ahorro: <b>-30% Oficina</b>.</p>
-                </div>
+                <input type="checkbox" id="check-iot" onchange="updateComparisonChart()">
+                <div><h4><i class="fas fa-microchip"></i> Sensores IoT</h4><p>Ahorro: <b>-10% Agua</b></p></div>
             </label>
-
             <label class="strategy-box checkbox-card">
-                <input type="checkbox" id="check-dispenser" onchange="updateComparisonChart()" style="transform: scale(1.5);">
-                <div>
-                    <h4><i class="fas fa-pump-soap"></i> Dispensadores Automáticos</h4>
-                    <p>Ahorro: <b>-15% Limpieza</b>.</p>
-                </div>
+                <input type="checkbox" id="check-perlatis" onchange="updateComparisonChart()">
+                <div><h4><i class="fas fa-faucet"></i> Perlizadores</h4><p>Ahorro: <b>-15% Agua</b></p></div>
+            </label>
+            <label class="strategy-box checkbox-card">
+                <input type="checkbox" id="check-paper" onchange="updateComparisonChart()">
+                <div><h4><i class="fas fa-file-pdf"></i> Cero Papel</h4><p>Ahorro: <b>-30% Oficina</b></p></div>
+            </label>
+            <label class="strategy-box checkbox-card">
+                <input type="checkbox" id="check-toner" onchange="updateComparisonChart()">
+                <div><h4><i class="fas fa-print"></i> Toner Eco</h4><p>Ahorro: <b>-15% Oficina</b></p></div>
+            </label>
+            <label class="strategy-box checkbox-card">
+                <input type="checkbox" id="check-dispenser" onchange="updateComparisonChart()">
+                <div><h4><i class="fas fa-pump-soap"></i> Dosificadores</h4><p>Ahorro: <b>-15% Limpieza</b></p></div>
+            </label>
+            <label class="strategy-box checkbox-card">
+                <input type="checkbox" id="check-bio" onchange="updateComparisonChart()">
+                <div><h4><i class="fas fa-recycle"></i> Bio-Productos</h4><p>Ahorro: <b>-10% Limpieza</b></p></div>
             </label>
         </div>
 
         <h3 style="margin-top: 30px; color: var(--itb-blue);">Comparativa Proyectada: Real vs. Con Acciones</h3>
-        <div class="chart-container" style="height: 350px; background: #fdfdfd; border: 1px solid #eee;">
+        <div class="chart-container" style="height: 350px;">
             <canvas id="comparisonChart"></canvas>
         </div>
     </div>
