@@ -52,12 +52,12 @@ function getDataForMode(mode) {
     ];
 }
 
-// LÓGICA DE AHORRO PARA EL SIMULADOR
 function getSavings() {
-    let s = { elec: 1, agua: 1, ofic: 1 };
+    let s = { elec: 1, agua: 1, ofic: 1, limp: 1 };
     if (document.getElementById('check-solar').checked) s.elec -= 0.15;
     if (document.getElementById('check-iot').checked) { s.elec -= 0.10; s.agua -= 0.10; }
     if (document.getElementById('check-paper').checked) s.ofic -= 0.30;
+    if (document.getElementById('check-dispenser').checked) s.limp -= 0.15;
     return s;
 }
 
@@ -88,7 +88,6 @@ function initChart() {
     });
 }
 
-// GRÁFICO 2: COMPARATIVO ACCIONES (NUEVO)
 function initComparisonChart() {
     const ctx = document.getElementById('comparisonChart').getContext('2d');
     const actualData = getDataForMode(currentMode);
@@ -97,7 +96,7 @@ function initComparisonChart() {
         actualData[0] * s.elec,
         actualData[1] * s.agua,
         actualData[2] * s.ofic,
-        actualData[3] * 1 // Limpieza se mantiene igual en esta simulación
+        actualData[3] * s.limp
     ];
 
     const data = {
@@ -176,9 +175,9 @@ function render() {
                 <thead><tr><th>Elemento</th><th>Cantidad (12m)</th><th>IPC %</th><th>Gasto (€)</th></tr></thead>
                 <tr><td>Detergente Multiusos</td><td>${(150 * m).toFixed(1)} L</td><td>${ipcPercent}%</td><td class="val-total">${applyIPC(270 * m, currentMode).toFixed(2)} €</td></tr>
                 <tr><td>Desinfectante</td><td>${(96 * m).toFixed(1)} L</td><td>${ipcPercent}%</td><td class="val-total">${applyIPC(307.2 * m, currentMode).toFixed(2)} €</td></tr>
-                <tr><td>Papel Higiénico</td><td>${Math.round(1140 * m)} ud</td><td>${ipcPercent}%</td><td class="val-total">${applyIPC(433.2 * m, currentMode).toFixed(2)} €</td></tr>
-                <tr><td>Jabón de manos</td><td>${(120 * m).toFixed(1)} L</td><td>${ipcPercent}%</td><td class="val-total">${applyIPC(252 * m, currentMode).toFixed(2)} €</td></tr>
-                <tr class="row-total-gasto"><td>TOTAL GASTO LIMPIEZA</td><td>-</td><td>-</td><td class="val-total">${applyIPC(baseLimpiezaEur * m, currentMode).toFixed(2)} €</td></tr>
+                <tr><td>Paper Higiènic</td><td>${Math.round(1140 * m)} ud</td><td>${ipcPercent}%</td><td class="val-total">${applyIPC(433.2 * m, currentMode).toFixed(2)} €</td></tr>
+                <tr><td>Sabó de mans</td><td>${(120 * m).toFixed(1)} L</td><td>${ipcPercent}%</td><td class="val-total">${applyIPC(252 * m, currentMode).toFixed(2)} €</td></tr>
+                <tr class=\"row-total-gasto\"><td>TOTAL GASTO LIMPIEZA</td><td>-</td><td>-</td><td class=\"val-total\">${applyIPC(baseLimpiezaEur * m, currentMode).toFixed(2)} €</td></tr>
             </table>
         </div>
     `;
@@ -186,7 +185,7 @@ function render() {
     document.getElementById('cronograma-body').innerHTML = `
         <tr><td>Año 1 (${currentYear + 1})</td><td>Instalación de sensores IoT</td><td>kWh y m³</td><td><b>-10%</b></td></tr>
         <tr><td>Año 2 (${currentYear + 2})</td><td>Virtualización de servidores</td><td>Amperaje Rack</td><td><b>-22%</b></td></tr>
-        <tr><td>Año 3 (${currentYear + 3})</td><td>Políticas "Residuo Cero"</td><td>Unidades papel</td><td><b>-30%</b></td></tr>
+        <tr><td>Año 3 (${currentYear + 3})</td><td>Digitalización y Dispensadores</td><td>Papel y Jabón</td><td><b>-30% / -15%</b></td></tr>
     `;
 }
 
