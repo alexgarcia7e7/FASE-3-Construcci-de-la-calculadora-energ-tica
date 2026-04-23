@@ -1,6 +1,7 @@
 let myChart;
 let comparisonChart;
 let currentMode = 'current';
+
 const currentYear = new Date().getFullYear();
 
 const baseElec = 158500;
@@ -63,7 +64,11 @@ function render() {
     const m = getMultiplier(currentMode);
     const ipc = getIPC(currentMode);
     const grid = document.getElementById('main-grid');
-    let dYear = currentMode === 'past' ? currentYear - 1 : currentMode === 'future' ? currentYear + 1 : currentMode === 'goal' ? currentYear + 3 : currentYear;
+
+    let dYear = currentYear;
+    if (currentMode === 'past') dYear = currentYear - 1;
+    if (currentMode === 'future') dYear = currentYear + 1;
+    if (currentMode === 'goal') dYear = currentYear + 3;
 
     grid.innerHTML = `
         <div class="card">
@@ -103,26 +108,38 @@ function render() {
         </div>
     `;
 
+    // Sincronización del cronograma con las acciones del simulador
     document.getElementById('cronograma-body').innerHTML = `
-        <tr><td>Año 1 (2027)</td><td>Sensores IoT y Placas Solares</td><td>kWh / m³</td><td>-25%</td></tr>
-        <tr><td>Año 2 (2028)</td><td>Virtualización y Servidores Eco</td><td>Rack Amp</td><td>-22%</td></tr>
-        <tr><td>Año 3 (2029)</td><td>Cero Papel y Digitalización 100%</td><td>Unidades</td><td>-30%</td></tr>
+        <tr><td>Año 1 (${currentYear + 1})</td><td>Placas Solares + Sensores IoT</td><td>kWh / m³</td><td><b>-25%</b></td></tr>
+        <tr><td>Año 2 (${currentYear + 2})</td><td>Virtualización + Perlizadores</td><td>Eficiencia</td><td><b>-37%</b></td></tr>
+        <tr><td>Año 3 (${currentYear + 3})</td><td>Cero Papel + Dosificadores</td><td>Residuos</td><td><b>-45%</b></td></tr>
     `;
 }
 
 function initChart() {
     const ctx = document.getElementById('sustainabilityChart').getContext('2d');
+    const labels = [`${currentYear - 1}`, `${currentYear}`, `${currentYear + 1}`, `${currentYear + 3}`];
+
     const data = {
         labels: ['Energía (kWh/100)', 'Agua (m³)', 'Oficina (€)', 'Limpieza (€)'],
         datasets: [
-            { label: `${currentYear-1}`, data: getDataForMode('past'), backgroundColor: getSectionColors(0.3), borderColor: getSectionColors(1), borderWidth: 1 },
-            { label: `${currentYear}`, data: getDataForMode('current'), backgroundColor: getSectionColors(0.5), borderColor: getSectionColors(1), borderWidth: 1 },
-            { label: `${currentYear+1}`, data: getDataForMode('future'), backgroundColor: getSectionColors(0.8), borderColor: getSectionColors(1), borderWidth: 1 },
-            { label: `${currentYear+3}`, data: getDataForMode('goal'), backgroundColor: getSectionColors(1), borderColor: getSectionColors(1), borderWidth: 1 }
+            { label: labels[0], data: getDataForMode('past'), backgroundColor: getSectionColors(0.3), borderColor: getSectionColors(1), borderWidth: 1 },
+            { label: labels[1], data: getDataForMode('current'), backgroundColor: getSectionColors(0.5), borderColor: getSectionColors(1), borderWidth: 1 },
+            { label: labels[2], data: getDataForMode('future'), backgroundColor: getSectionColors(0.8), borderColor: getSectionColors(1), borderWidth: 1 },
+            { label: labels[3], data: getDataForMode('goal'), backgroundColor: getSectionColors(1), borderColor: getSectionColors(1), borderWidth: 1 }
         ]
     };
+
     if (myChart) myChart.destroy();
-    myChart = new Chart(ctx, { type: 'bar', data: data, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 2700 } } } });
+    myChart = new Chart(ctx, {
+        type: 'bar',
+        data: data,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: { y: { beginAtZero: true, max: 2700 } }
+        }
+    });
 }
 
 function initComparisonChart() {
@@ -130,6 +147,7 @@ function initComparisonChart() {
     const actualData = getDataForMode(currentMode);
     const s = getSavings();
     const projectedData = [actualData[0]*s.elec, actualData[1]*s.agua, actualData[2]*s.ofic, actualData[3]*s.limp];
+
     if (comparisonChart) comparisonChart.destroy();
     comparisonChart = new Chart(ctx, {
         type: 'bar',
@@ -137,7 +155,7 @@ function initComparisonChart() {
             labels: ['Energía', 'Agua', 'Oficina', 'Limpieza'],
             datasets: [
                 { label: 'Situación Real', data: actualData, backgroundColor: 'rgba(200, 200, 200, 0.5)' },
-                { label: 'Con Mejoras', data: projectedData, backgroundColor: getSectionColors(0.9) }
+                { label: 'Con Mejoras', data: projectedData, backgroundColor: getSectionColors(0.8) }
             ]
         },
         options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 2700 } } }
@@ -155,10 +173,15 @@ function updateView(mode) {
 function updateComparisonChart() { initComparisonChart(); }
 
 function updateInterfaceTexts() {
-    document.getElementById('btn-past').innerText = `Año Pasado (${currentYear-1})`;
+    document.getElementById('btn-past').innerText = `Año Pasado (${currentYear - 1})`;
     document.getElementById('btn-current').innerText = `Este Año (${currentYear})`;
-    document.getElementById('btn-future').innerText = `Próximo Año (${currentYear+1})`;
-    document.getElementById('btn-goal').innerText = `Meta 3 Años (${currentYear+3})`;
+    document.getElementById('btn-future').innerText = `Próximo Año (${currentYear + 1})`;
+    document.getElementById('btn-goal').innerText = `Meta 3 Años (${currentYear + 3})`;
 }
 
-window.onload = function() { updateInterfaceTexts(); render(); initChart(); initComparisonChart(); };
+window.onload = function() {
+    updateInterfaceTexts();
+    render();
+    initChart();
+    initComparisonChart();
+};
