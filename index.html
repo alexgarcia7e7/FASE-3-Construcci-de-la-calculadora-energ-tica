@@ -35,26 +35,26 @@
         <div class="reduction-grid">
             <div class="strategy-box">
                 <h4><i class="fas fa-bolt"></i> Energía</h4>
-                <p>Uso de <b>placas solares</b> para autoconsumo y <b>virtualización</b> de servidores para reducir el gasto eléctrico.</p>
+                <p>Uso de <b>placas solares</b> y <b>virtualización</b> de servidores. Apoyado en renovación <b>LED</b> y <b>climatización A+++</b> eficiente.</p>
             </div>
             <div class="strategy-box">
                 <h4><i class="fas fa-tint"></i> Agua</h4>
-                <p>Detección de fugas con <b>sensores IoT</b> e instalación de <b>perlizadores</b> para optimizar el consumo hídrico.</p>
+                <p>Control mediante <b>Sensores IoT</b> y <b>Perlizadores</b> automáticos. Uso de <b>recogida pluvial</b> y <b>xerojardinería</b>.</p>
             </div>
             <div class="strategy-box">
                 <h4><i class="fas fa-copy"></i> Oficina</h4>
-                <p>Meta <b>Cero Papel</b> mediante digitalización y uso de <b>Toner Eco</b> de alta eficiencia.</p>
+                <p>Hacia el <b>Cero Papel</b> y <b>Toner Eco</b>. Uso de equipos <b>Refurbished</b> y gestión de almacenamiento en el <b>Cloud</b>.</p>
             </div>
             <div class="strategy-box">
                 <h4><i class="fas fa-shining"></i> Limpieza</h4>
-                <p>Uso de <b>bio-productos</b> y <b>dosificadores</b> para evitar el desperdicio de químicos y plásticos.</p>
+                <p>Uso de <b>Bio-Productos</b> y <b>Agua Ozonizada</b>. Instalación de <b>Dosificadores</b> y paños de <b>Microfibras</b>.</p>
             </div>
         </div>
 
         <h3>Cronograma de Mejora a 3 Años</h3>
         <table>
             <thead>
-                <tr><th>Fase</th><th>Acciones del Simulador Relacionadas</th><th>Indicador</th><th>Reducción</th></tr>
+                <tr><th>Fase</th><th>Acciones Clave del Simulador</th><th>Indicador</th><th>Reducción</th></tr>
             </thead>
             <tbody id="cronograma-body"></tbody>
         </table>
@@ -62,44 +62,35 @@
 
     <div class="section-reduction" style="border-left: 8px solid var(--itb-orange); margin-top: 30px;">
         <h2><i class="fas fa-tools"></i> Simulador de Acciones Recomendadas</h2>
-        <p>Selecciona las mejoras para comparar el impacto proyectado:</p>
-        <div class="reduction-grid">
-            <label class="strategy-box checkbox-card">
-                <input type="checkbox" id="check-solar" onchange="updateComparisonChart()">
-                <div><h4><i class="fas fa-sun"></i> Placas Solares</h4><p>Ahorro: <b>-15% Energía</b></p></div>
-            </label>
-            <label class="strategy-box checkbox-card">
-                <input type="checkbox" id="check-server" onchange="updateComparisonChart()">
-                <div><h4><i class="fas fa-server"></i> Virtualización</h4><p>Ahorro: <b>-22% Energía</b></p></div>
-            </label>
-            <label class="strategy-box checkbox-card">
-                <input type="checkbox" id="check-iot" onchange="updateComparisonChart()">
-                <div><h4><i class="fas fa-microchip"></i> Sensores IoT</h4><p>Ahorro: <b>-10% Agua</b></p></div>
-            </label>
-            <label class="strategy-box checkbox-card">
-                <input type="checkbox" id="check-perlatis" onchange="updateComparisonChart()">
-                <div><h4><i class="fas fa-faucet"></i> Perlizadores</h4><p>Ahorro: <b>-15% Agua</b></p></div>
-            </label>
-            <label class="strategy-box checkbox-card">
-                <input type="checkbox" id="check-paper" onchange="updateComparisonChart()">
-                <div><h4><i class="fas fa-file-pdf"></i> Cero Papel</h4><p>Ahorro: <b>-30% Oficina</b></p></div>
-            </label>
-            <label class="strategy-box checkbox-card">
-                <input type="checkbox" id="check-toner" onchange="updateComparisonChart()">
-                <div><h4><i class="fas fa-print"></i> Toner Eco</h4><p>Ahorro: <b>-15% Oficina</b></p></div>
-            </label>
-            <label class="strategy-box checkbox-card">
-                <input type="checkbox" id="check-dispenser" onchange="updateComparisonChart()">
-                <div><h4><i class="fas fa-pump-soap"></i> Dosificadores</h4><p>Ahorro: <b>-15% Limpieza</b></p></div>
-            </label>
-            <label class="strategy-box checkbox-card">
-                <input type="checkbox" id="check-bio" onchange="updateComparisonChart()">
-                <div><h4><i class="fas fa-recycle"></i> Bio-Productos</h4><p>Ahorro: <b>-10% Limpieza</b></p></div>
-            </label>
+        <div class="nav-filters">
+            <button class="filter-btn active" onclick="filterCategory('all', this)">Todas</button>
+            <button class="filter-btn" onclick="filterCategory('energia', this)">Energía</button>
+            <button class="filter-btn" onclick="filterCategory('agua', this)">Agua</button>
+            <button class="filter-btn" onclick="filterCategory('oficina', this)">Oficina</button>
+            <button class="filter-btn" onclick="filterCategory('limpieza', this)">Limpieza</button>
         </div>
 
-        <h3 style="margin-top: 30px; color: var(--itb-blue);">Comparativa Proyectada: Real vs. Con Acciones</h3>
-        <div class="chart-container" style="height: 350px;">
+        <div class="reduction-grid scrollable-grid" id="actions-container">
+            <label class="strategy-box checkbox-card" data-cat="energia"><input type="checkbox" id="check-solar" onchange="updateComparisonChart()"><div><h4>Placas Solares</h4><p>Ahorro: -15%</p></div></label>
+            <label class="strategy-box checkbox-card" data-cat="energia"><input type="checkbox" id="check-server" onchange="updateComparisonChart()"><div><h4>Virtualización</h4><p>Ahorro: -22%</p></div></label>
+            <label class="strategy-box checkbox-card" data-cat="energia"><input type="checkbox" id="check-led" onchange="updateComparisonChart()"><div><h4>Iluminación LED</h4><p>Ahorro: -10%</p></div></label>
+            <label class="strategy-box checkbox-card" data-cat="energia"><input type="checkbox" id="check-clima" onchange="updateComparisonChart()"><div><h4>Clima A+++</h4><p>Ahorro: -12%</p></div></label>
+            <label class="strategy-box checkbox-card" data-cat="agua"><input type="checkbox" id="check-iot" onchange="updateComparisonChart()"><div><h4>Sensores IoT</h4><p>Ahorro: -10%</p></div></label>
+            <label class="strategy-box checkbox-card" data-cat="agua"><input type="checkbox" id="check-perlatis" onchange="updateComparisonChart()"><div><h4>Perlizadores</h4><p>Ahorro: -15%</p></div></label>
+            <label class="strategy-box checkbox-card" data-cat="agua"><input type="checkbox" id="check-rain" onchange="updateComparisonChart()"><div><h4>Recogida Pluvial</h4><p>Ahorro: -8%</p></div></label>
+            <label class="strategy-box checkbox-card" data-cat="agua"><input type="checkbox" id="check-dry" onchange="updateComparisonChart()"><div><h4>Xerojardinería</h4><p>Ahorro: -5%</p></div></label>
+            <label class="strategy-box checkbox-card" data-cat="oficina"><input type="checkbox" id="check-paper" onchange="updateComparisonChart()"><div><h4>Cero Papel</h4><p>Ahorro: -30%</p></div></label>
+            <label class="strategy-box checkbox-card" data-cat="oficina"><input type="checkbox" id="check-toner" onchange="updateComparisonChart()"><div><h4>Toner Eco</h4><p>Ahorro: -15%</p></div></label>
+            <label class="strategy-box checkbox-card" data-cat="oficina"><input type="checkbox" id="check-refurb" onchange="updateComparisonChart()"><div><h4>Refurbished</h4><p>Ahorro: -10%</p></div></label>
+            <label class="strategy-box checkbox-card" data-cat="oficina"><input type="checkbox" id="check-cloud" onchange="updateComparisonChart()"><div><h4>Gestión Cloud</h4><p>Ahorro: -5%</p></div></label>
+            <label class="strategy-box checkbox-card" data-cat="limpieza"><input type="checkbox" id="check-dispenser" onchange="updateComparisonChart()"><div><h4>Dosificadores</h4><p>Ahorro: -15%</p></div></label>
+            <label class="strategy-box checkbox-card" data-cat="limpieza"><input type="checkbox" id="check-bio" onchange="updateComparisonChart()"><div><h4>Bio-Productos</h4><p>Ahorro: -10%</p></div></label>
+            <label class="strategy-box checkbox-card" data-cat="limpieza"><input type="checkbox" id="check-ozone" onchange="updateComparisonChart()"><div><h4>Agua Ozonizada</h4><p>Ahorro: -12%</p></div></label>
+            <label class="strategy-box checkbox-card" data-cat="limpieza"><input type="checkbox" id="check-micro" onchange="updateComparisonChart()"><div><h4>Microfibras</h4><p>Ahorro: -8%</p></div></label>
+        </div>
+
+        <h3 style="margin-top: 30px; color: var(--itb-blue);">Proyección Mensual Realista</h3>
+        <div class="chart-container" style="height: 380px;">
             <canvas id="comparisonChart"></canvas>
         </div>
     </div>

@@ -1,9 +1,9 @@
 let myChart;
 let comparisonChart;
 let currentMode = 'current';
-
 const currentYear = new Date().getFullYear();
 
+// DATOS ORIGINALES (NO TOCADOS)
 const baseElec = 158500;
 const baseAgua = 950;
 const baseOficinaEur = 2273.5;
@@ -22,6 +22,17 @@ const getSectionColors = (opacity) => [
     `rgba(${colors.oficina}, ${opacity})`,
     `rgba(${colors.limpieza}, ${opacity})`
 ];
+
+// FILTRO DE CATEGORÍAS
+function filterCategory(category, btn) {
+    const cards = document.querySelectorAll('.checkbox-card');
+    const buttons = document.querySelectorAll('.filter-btn');
+    buttons.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    cards.forEach(card => {
+        card.style.display = (category === 'all' || card.getAttribute('data-cat') === category) ? 'flex' : 'none';
+    });
+}
 
 function getMultiplier(mode) {
     const map = { 'past': 1.05, 'current': 1.0, 'future': 0.90, 'goal': 0.70 };
@@ -47,16 +58,25 @@ function getDataForMode(mode) {
     ];
 }
 
+// LÓGICA DE AHORROS SEGÚN LOS 16 CHECKBOXES
 function getSavings() {
     let s = { elec: 1, agua: 1, ofic: 1, limp: 1 };
     if (document.getElementById('check-solar').checked) s.elec -= 0.15;
     if (document.getElementById('check-server').checked) s.elec -= 0.22;
+    if (document.getElementById('check-led').checked) s.elec -= 0.10;
+    if (document.getElementById('check-clima').checked) s.elec -= 0.12;
     if (document.getElementById('check-iot').checked) s.agua -= 0.10;
     if (document.getElementById('check-perlatis').checked) s.agua -= 0.15;
+    if (document.getElementById('check-rain').checked) s.agua -= 0.08;
+    if (document.getElementById('check-dry').checked) s.agua -= 0.05;
     if (document.getElementById('check-paper').checked) s.ofic -= 0.30;
     if (document.getElementById('check-toner').checked) s.ofic -= 0.15;
+    if (document.getElementById('check-refurb').checked) s.ofic -= 0.10;
+    if (document.getElementById('check-cloud').checked) s.ofic -= 0.05;
     if (document.getElementById('check-dispenser').checked) s.limp -= 0.15;
     if (document.getElementById('check-bio').checked) s.limp -= 0.10;
+    if (document.getElementById('check-ozone').checked) s.limp -= 0.12;
+    if (document.getElementById('check-micro').checked) s.limp -= 0.08;
     return s;
 }
 
@@ -64,11 +84,7 @@ function render() {
     const m = getMultiplier(currentMode);
     const ipc = getIPC(currentMode);
     const grid = document.getElementById('main-grid');
-
-    let dYear = currentYear;
-    if (currentMode === 'past') dYear = currentYear - 1;
-    if (currentMode === 'future') dYear = currentYear + 1;
-    if (currentMode === 'goal') dYear = currentYear + 3;
+    let dYear = currentMode === 'past' ? currentYear - 1 : currentMode === 'future' ? currentYear + 1 : currentMode === 'goal' ? currentYear + 3 : currentYear;
 
     grid.innerHTML = `
         <div class="card">
@@ -108,58 +124,62 @@ function render() {
         </div>
     `;
 
-    // Sincronización del cronograma con las acciones del simulador
     document.getElementById('cronograma-body').innerHTML = `
-        <tr><td>Año 1 (${currentYear + 1})</td><td>Placas Solares + Sensores IoT</td><td>kWh / m³</td><td><b>-25%</b></td></tr>
-        <tr><td>Año 2 (${currentYear + 2})</td><td>Virtualización + Perlizadores</td><td>Eficiencia</td><td><b>-37%</b></td></tr>
-        <tr><td>Año 3 (${currentYear + 3})</td><td>Cero Papel + Dosificadores</td><td>Residuos</td><td><b>-45%</b></td></tr>
+        <tr><td>Año 1 (2027)</td><td><b>Energía:</b> Solar y LED</td><td>kWh</td><td><b>-25%</b></td></tr>
+        <tr><td>Año 2 (2028)</td><td><b>Agua:</b> Sensores y Perlizadores</td><td>m³</td><td><b>-25%</b></td></tr>
+        <tr><td>Año 3 (2029)</td><td><b>Materiales:</b> Cero Papel y Dosificadores</td><td>€ / Residuos</td><td><b>-45%</b></td></tr>
     `;
+}
+
+function initComparisonChart() {
+    const ctx = document.getElementById('comparisonChart').getContext('2d');
+    const actualBase = getDataForMode(currentMode);
+    const s = getSavings();
+    const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+
+    const generateRealisticData = (baseVal, savingFactor) => {
+        return months.map((m, index) => {
+            let seasonality = 1.0;
+            if ([0, 4, 11].includes(index)) seasonality = 1.15; // Exámenes e Invierno
+            if ([3, 6, 7].includes(index)) seasonality = 0.45; // Vacaciones
+            let progress = (index / 11);
+            let targetSaving = 1 - ((1 - savingFactor) * progress);
+            let noise = 1 + (Math.random() * 0.08 - 0.04);
+            return baseVal * targetSaving * seasonality * noise;
+        });
+    };
+
+    if (comparisonChart) comparisonChart.destroy();
+    comparisonChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: months,
+            datasets: [
+                { label: 'Energía', data: generateRealisticData(actualBase[0], s.elec), borderColor: 'rgba(0, 74, 153, 1)', tension: 0.4, fill: false },
+                { label: 'Agua', data: generateRealisticData(actualBase[1], s.agua), borderColor: 'rgba(40, 167, 69, 1)', tension: 0.4, fill: false },
+                { label: 'Oficina', data: generateRealisticData(actualBase[2], s.ofic), borderColor: 'rgba(243, 156, 18, 1)', tension: 0.4, fill: false },
+                { label: 'Limpieza', data: generateRealisticData(actualBase[3], s.limp), borderColor: 'rgba(255, 0, 0, 1)', tension: 0.4, fill: false }
+            ]
+        },
+        options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 2700 } } }
+    });
 }
 
 function initChart() {
     const ctx = document.getElementById('sustainabilityChart').getContext('2d');
     const labels = [`${currentYear - 1}`, `${currentYear}`, `${currentYear + 1}`, `${currentYear + 3}`];
-
     const data = {
         labels: ['Energía (kWh/100)', 'Agua (m³)', 'Oficina (€)', 'Limpieza (€)'],
-        datasets: [
-            { label: labels[0], data: getDataForMode('past'), backgroundColor: getSectionColors(0.3), borderColor: getSectionColors(1), borderWidth: 1 },
-            { label: labels[1], data: getDataForMode('current'), backgroundColor: getSectionColors(0.5), borderColor: getSectionColors(1), borderWidth: 1 },
-            { label: labels[2], data: getDataForMode('future'), backgroundColor: getSectionColors(0.8), borderColor: getSectionColors(1), borderWidth: 1 },
-            { label: labels[3], data: getDataForMode('goal'), backgroundColor: getSectionColors(1), borderColor: getSectionColors(1), borderWidth: 1 }
-        ]
+        datasets: labels.map((label, i) => ({
+            label,
+            data: getDataForMode(['past', 'current', 'future', 'goal'][i]),
+            backgroundColor: getSectionColors(0.3 + (i * 0.2)),
+            borderColor: getSectionColors(1),
+            borderWidth: 1
+        }))
     };
-
     if (myChart) myChart.destroy();
-    myChart = new Chart(ctx, {
-        type: 'bar',
-        data: data,
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: { y: { beginAtZero: true, max: 2700 } }
-        }
-    });
-}
-
-function initComparisonChart() {
-    const ctx = document.getElementById('comparisonChart').getContext('2d');
-    const actualData = getDataForMode(currentMode);
-    const s = getSavings();
-    const projectedData = [actualData[0]*s.elec, actualData[1]*s.agua, actualData[2]*s.ofic, actualData[3]*s.limp];
-
-    if (comparisonChart) comparisonChart.destroy();
-    comparisonChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['Energía', 'Agua', 'Oficina', 'Limpieza'],
-            datasets: [
-                { label: 'Situación Real', data: actualData, backgroundColor: 'rgba(200, 200, 200, 0.5)' },
-                { label: 'Con Mejoras', data: projectedData, backgroundColor: getSectionColors(0.8) }
-            ]
-        },
-        options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 2700 } } }
-    });
+    myChart = new Chart(ctx, { type: 'bar', data, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 2700 } } } });
 }
 
 function updateView(mode) {
@@ -173,15 +193,12 @@ function updateView(mode) {
 function updateComparisonChart() { initComparisonChart(); }
 
 function updateInterfaceTexts() {
-    document.getElementById('btn-past').innerText = `Año Pasado (${currentYear - 1})`;
-    document.getElementById('btn-current').innerText = `Este Año (${currentYear})`;
-    document.getElementById('btn-future').innerText = `Próximo Año (${currentYear + 1})`;
-    document.getElementById('btn-goal').innerText = `Meta 3 Años (${currentYear + 3})`;
+    document.getElementById('btn-past').innerText = `${currentYear - 1}`;
+    document.getElementById('btn-current').innerText = `${currentYear}`;
+    document.getElementById('btn-future').innerText = `${currentYear + 1}`;
+    document.getElementById('btn-goal').innerText = `${currentYear + 3}`;
 }
 
-window.onload = function() {
-    updateInterfaceTexts();
-    render();
-    initChart();
-    initComparisonChart();
+window.onload = () => {
+    updateInterfaceTexts(); render(); initChart(); initComparisonChart();
 };
