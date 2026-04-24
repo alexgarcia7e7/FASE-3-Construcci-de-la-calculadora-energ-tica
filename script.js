@@ -3,7 +3,7 @@ let comparisonChart;
 let currentMode = 'current';
 const currentYear = new Date().getFullYear();
 
-// DATOS ORIGINALES (NO TOCADOS)
+// ORIGINAL DATA (NO TOCADOS)
 const baseElec = 158500;
 const baseAgua = 950;
 const baseOficinaEur = 2273.5;
@@ -23,7 +23,7 @@ const getSectionColors = (opacity) => [
     `rgba(${colors.limpieza}, ${opacity})`
 ];
 
-// FILTRO DE CATEGORÍAS
+// CATEGORY FILTER
 function filterCategory(category, btn) {
     const cards = document.querySelectorAll('.checkbox-card');
     const buttons = document.querySelectorAll('.filter-btn');
@@ -58,7 +58,7 @@ function getDataForMode(mode) {
     ];
 }
 
-// LÓGICA DE AHORROS SEGÚN LOS 16 CHECKBOXES
+// SAVINGS LOGIC ACCORDING TO 16 CHECKBOXES
 function getSavings() {
     let s = { elec: 1, agua: 1, ofic: 1, limp: 1 };
     if (document.getElementById('check-solar').checked) s.elec -= 0.15;
@@ -88,46 +88,46 @@ function render() {
 
     grid.innerHTML = `
         <div class="card">
-            <h3><i class="fas fa-bolt"></i> Energía Eléctrica (${dYear})</h3>
+            <h3><i class="fas fa-bolt"></i> Electric Energy (${dYear})</h3>
             <table>
-                <thead><tr><th>Indicador</th><th>Gasto Anual</th><th>Lectivo (Sep-Jun)</th></tr></thead>
-                <tr><td>Electricidad IT</td><td class="val-total">${(baseElec * m).toLocaleString()} kWh</td><td class="val-total">${(baseElec * m * 0.88).toLocaleString()} kWh</td></tr>
+                <thead><tr><th>Indicator</th><th>Annual Cost</th><th>Term (Sep-Jun)</th></tr></thead>
+                <tr><td>IT Electricity <span class="label-sub">Servers + Classrooms</span></td><td class="val-total">${(baseElec * m).toLocaleString()} kWh</td><td class="val-total">${(baseElec * m * 0.88).toLocaleString()} kWh</td></tr>
             </table>
         </div>
         <div class="card">
-            <h3><i class="fas fa-tint"></i> Agua (${dYear})</h3>
+            <h3><i class="fas fa-tint"></i> Water (${dYear})</h3>
             <table>
-                <thead><tr><th>Indicador</th><th>Gasto Anual</th><th>Lectivo (Sep-Jun)</th></tr></thead>
-                <tr><td>Agua Total</td><td class="val-total">${(baseAgua * m).toFixed(1)} m³</td><td class="val-total">${(baseAgua * m * 0.9).toFixed(1)} m³</td></tr>
+                <thead><tr><th>Indicator</th><th>Annual Cost</th><th>Term (Sep-Jun)</th></tr></thead>
+                <tr><td>Water <span class="label-sub">1,000 users + Cleaning</span></td><td class="val-total">${(baseAgua * m).toFixed(1)} m³</td><td class="val-total">${(baseAgua * m * 0.9).toFixed(1)} m³</td></tr>
             </table>
         </div>
         <div class="card">
-            <h3><i class="fas fa-copy"></i> Material de oficina (${dYear})</h3>
+            <h3><i class="fas fa-copy"></i> Office Supplies (${dYear})</h3>
             <table>
-                <thead><tr><th>Elemento</th><th>Cantidad (12m)</th><th>IPC %</th><th>Gasto (€)</th></tr></thead>
-                <tr><td>Papel A4 Blanco</td><td>${Math.round(495 * m)} paq</td><td>${ipc}%</td><td class="val-total">${applyIPC(2079 * m, currentMode).toFixed(2)} €</td></tr>
-                <tr><td>Recambios Pizarra</td><td>${Math.round(120 * m)} ud</td><td>${ipc}%</td><td class="val-total">${applyIPC(132 * m, currentMode).toFixed(2)} €</td></tr>
-                <tr><td>Carpetas/Subcarpetas</td><td>${Math.round(250 * m)} ud</td><td>${ipc}%</td><td class="val-total">${applyIPC(62.5 * m, currentMode).toFixed(2)} €</td></tr>
-                <tr class="row-total-gasto"><td>TOTAL GASTO OFICINA</td><td>-</td><td>-</td><td class="val-total">${applyIPC(baseOficinaEur * m, currentMode).toFixed(2)} €</td></tr>
+                <thead><tr><th>Item</th><th>Quantity (12m)</th><th>IPC %</th><th>Cost (€)</th></tr></thead>
+                <tr><td>A4 White Paper</td><td>${Math.round(495 * m)} pks</td><td>${ipc}%</td><td class="val-total">${applyIPC(2079 * m, currentMode).toFixed(2)} €</td></tr>
+                <tr><td>Board Refills</td><td>${Math.round(120 * m)} units</td><td>${ipc}%</td><td class="val-total">${applyIPC(132 * m, currentMode).toFixed(2)} €</td></tr>
+                <tr><td>Folders/Subfolders</td><td>${Math.round(250 * m)} units</td><td>${ipc}%</td><td class="val-total">${applyIPC(62.5 * m, currentMode).toFixed(2)} €</td></tr>
+                <tr class="row-total-gasto"><td>TOTAL OFFICE COST</td><td>-</td><td>-</td><td class="val-total">${applyIPC(baseOficinaEur * m, currentMode).toFixed(2)} €</td></tr>
             </table>
         </div>
         <div class="card">
-            <h3><i class="fas fa-shining"></i> Material de limpieza (${dYear})</h3>
+            <h3><i class="fas fa-shining"></i> Cleaning Supplies (${dYear})</h3>
             <table>
-                <thead><tr><th>Elemento</th><th>Cantidad (12m)</th><th>IPC %</th><th>Gasto (€)</th></tr></thead>
-                <tr><td>Detergente Multiusos</td><td>${(150 * m).toFixed(1)} L</td><td>${ipc}%</td><td class="val-total">${applyIPC(270 * m, currentMode).toFixed(2)} €</td></tr>
-                <tr><td>Desinfectante</td><td>${(96 * m).toFixed(1)} L</td><td>${ipc}%</td><td class="val-total">${applyIPC(307.2 * m, currentMode).toFixed(2)} €</td></tr>
-                <tr><td>Paper Higiènic</td><td>${Math.round(1140 * m)} ud</td><td>${ipc}%</td><td class="val-total">${applyIPC(433.2 * m, currentMode).toFixed(2)} €</td></tr>
-                <tr><td>Sabó de mans</td><td>${(120 * m).toFixed(1)} L</td><td>${ipc}%</td><td class="val-total">${applyIPC(252 * m, currentMode).toFixed(2)} €</td></tr>
-                <tr class="row-total-gasto"><td>TOTAL GASTO LIMPIEZA</td><td>-</td><td>-</td><td class="val-total">${applyIPC(baseLimpiezaEur * m, currentMode).toFixed(2)} €</td></tr>
+                <thead><tr><th>Item</th><th>Quantity (12m)</th><th>IPC %</th><th>Cost (€)</th></tr></thead>
+                <tr><td>Multipurpose Cleaner</td><td>${(150 * m).toFixed(1)} L</td><td>${ipc}%</td><td class="val-total">${applyIPC(270 * m, currentMode).toFixed(2)} €</td></tr>
+                <tr><td>Disinfectant</td><td>${(96 * m).toFixed(1)} L</td><td>${ipc}%</td><td class="val-total">${applyIPC(307.2 * m, currentMode).toFixed(2)} €</td></tr>
+                <tr><td>Toilet Paper</td><td>${Math.round(1140 * m)} units</td><td>${ipc}%</td><td class="val-total">${applyIPC(433.2 * m, currentMode).toFixed(2)} €</td></tr>
+                <tr><td>Hand Soap</td><td>${(120 * m).toFixed(1)} L</td><td>${ipc}%</td><td class="val-total">${applyIPC(252 * m, currentMode).toFixed(2)} €</td></tr>
+                <tr class="row-total-gasto"><td>TOTAL CLEANING COST</td><td>-</td><td>-</td><td class="val-total">${applyIPC(baseLimpiezaEur * m, currentMode).toFixed(2)} €</td></tr>
             </table>
         </div>
     `;
 
     document.getElementById('cronograma-body').innerHTML = `
-        <tr><td>Año 1 (2027)</td><td><b>Energía:</b> Solar y LED</td><td>kWh</td><td><b>-25%</b></td></tr>
-        <tr><td>Año 2 (2028)</td><td><b>Agua:</b> Sensores y Perlizadores</td><td>m³</td><td><b>-25%</b></td></tr>
-        <tr><td>Año 3 (2029)</td><td><b>Materiales:</b> Cero Papel y Dosificadores</td><td>€ / Residuos</td><td><b>-45%</b></td></tr>
+        <tr><td>Year 1 (2027)</td><td><b>Energy:</b> Solar and LED</td><td>kWh</td><td><b>-25%</b></td></tr>
+        <tr><td>Year 2 (2028)</td><td><b>Water:</b> Sensors and Aerators</td><td>m³</td><td><b>-25%</b></td></tr>
+        <tr><td>Year 3 (2029)</td><td><b>Materials:</b> Zero Paper and Dispensers</td><td>€ / Waste</td><td><b>-45%</b></td></tr>
     `;
 }
 
@@ -135,13 +135,13 @@ function initComparisonChart() {
     const ctx = document.getElementById('comparisonChart').getContext('2d');
     const actualBase = getDataForMode(currentMode);
     const s = getSavings();
-    const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
     const generateRealisticData = (baseVal, savingFactor) => {
         return months.map((m, index) => {
             let seasonality = 1.0;
-            if ([0, 4, 11].includes(index)) seasonality = 1.15; // Exámenes e Invierno
-            if ([3, 6, 7].includes(index)) seasonality = 0.45; // Vacaciones
+            if ([0, 4, 11].includes(index)) seasonality = 1.15; // Exams & Winter
+            if ([3, 6, 7].includes(index)) seasonality = 0.45; // Holidays
             let progress = (index / 11);
             let targetSaving = 1 - ((1 - savingFactor) * progress);
             let noise = 1 + (Math.random() * 0.08 - 0.04);
@@ -155,10 +155,10 @@ function initComparisonChart() {
         data: {
             labels: months,
             datasets: [
-                { label: 'Energía', data: generateRealisticData(actualBase[0], s.elec), borderColor: 'rgba(0, 74, 153, 1)', tension: 0.4, fill: false },
-                { label: 'Agua', data: generateRealisticData(actualBase[1], s.agua), borderColor: 'rgba(40, 167, 69, 1)', tension: 0.4, fill: false },
-                { label: 'Oficina', data: generateRealisticData(actualBase[2], s.ofic), borderColor: 'rgba(243, 156, 18, 1)', tension: 0.4, fill: false },
-                { label: 'Limpieza', data: generateRealisticData(actualBase[3], s.limp), borderColor: 'rgba(255, 0, 0, 1)', tension: 0.4, fill: false }
+                { label: 'Energy', data: generateRealisticData(actualBase[0], s.elec), borderColor: 'rgba(0, 74, 153, 1)', tension: 0.4, fill: false },
+                { label: 'Water', data: generateRealisticData(actualBase[1], s.agua), borderColor: 'rgba(40, 167, 69, 1)', tension: 0.4, fill: false },
+                { label: 'Office', data: generateRealisticData(actualBase[2], s.ofic), borderColor: 'rgba(243, 156, 18, 1)', tension: 0.4, fill: false },
+                { label: 'Cleaning', data: generateRealisticData(actualBase[3], s.limp), borderColor: 'rgba(255, 0, 0, 1)', tension: 0.4, fill: false }
             ]
         },
         options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 2700 } } }
@@ -169,7 +169,7 @@ function initChart() {
     const ctx = document.getElementById('sustainabilityChart').getContext('2d');
     const labels = [`${currentYear - 1}`, `${currentYear}`, `${currentYear + 1}`, `${currentYear + 3}`];
     const data = {
-        labels: ['Energía (kWh/100)', 'Agua (m³)', 'Oficina (€)', 'Limpieza (€)'],
+        labels: ['Energy (kWh/100)', 'Water (m³)', 'Office (€)', 'Cleaning (€)'],
         datasets: labels.map((label, i) => ({
             label,
             data: getDataForMode(['past', 'current', 'future', 'goal'][i]),
@@ -193,10 +193,10 @@ function updateView(mode) {
 function updateComparisonChart() { initComparisonChart(); }
 
 function updateInterfaceTexts() {
-    document.getElementById('btn-past').innerText = `${currentYear - 1}`;
-    document.getElementById('btn-current').innerText = `${currentYear}`;
-    document.getElementById('btn-future').innerText = `${currentYear + 1}`;
-    document.getElementById('btn-goal').innerText = `${currentYear + 3}`;
+    document.getElementById('btn-past').innerText = `Last Year (${currentYear - 1})`;
+    document.getElementById('btn-current').innerText = `Current Year (${currentYear})`;
+    document.getElementById('btn-future').innerText = `Next Year (${currentYear + 1})`;
+    document.getElementById('btn-goal').innerText = `3-Year Goal (${currentYear + 3})`;
 }
 
 window.onload = () => {
